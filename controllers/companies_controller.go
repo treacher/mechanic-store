@@ -8,7 +8,6 @@ import (
 
   "net/http"
   "encoding/json"
-  "time"
 )
 
 func CreateCompany(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -28,10 +27,7 @@ func CreateCompany(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
     return
   }
 
-  currentTime := time.Now()
-
-  company.CreatedAt = currentTime
-  company.UpdatedAt = currentTime
+  company = company.InitDates()
 
   err = db.Insert(&company)
 
