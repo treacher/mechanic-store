@@ -1,0 +1,6 @@
+development:
+  driver: postgres
+  open: user=postgres dbname=mechanic-store sslmode=disable
+production:
+    driver: postgres
+    open: $DATABASE_URL

@@ -3,7 +3,7 @@ package controllers_test
 import (
   "github.com/treacher/mechanic-store/router"
   "github.com/treacher/mechanic-store/models"
-  "github.com/treacher/mechanic-store/database"
+  "github.com/treacher/mechanic-store/db"
   "gopkg.in/pg.v5"
 
   "net/http"
@@ -14,7 +14,7 @@ import (
 )
 
 func TestCreateCompany(t *testing.T) {
-  database.Connection = pg.Connect(&pg.Options{ User: "postgres", Database: "mechanic-store" })
+  db.Connection = pg.Connect(&pg.Options{ User: "postgres", Database: "mechanic-store" })
 
   companyJson := `{"name": "dennis", "phone": "+64505050505", "email": "foo@bar.com" }`
   companyReader := strings.NewReader(companyJson)
@@ -81,7 +81,7 @@ func testResponseCode(t *testing.T, actual int, expected int) {
 func testCompanyPersisted(t *testing.T, companyId uint64) {
    var company models.Company
 
-   _, err := database.Connection.QueryOne(&company, `SELECT * FROM companies WHERE id = ?`, companyId)
+   _, err := db.Connection.QueryOne(&company, `SELECT * FROM companies WHERE id = ?`, companyId)
 
   if err != nil {
     t.Errorf("expected company with id: %v to exist but it did not %v", companyId, err.Error())
@@ -89,5 +89,5 @@ func testCompanyPersisted(t *testing.T, companyId uint64) {
 }
 
 func destroyCreatedCompany(company *models.Company) {
-  database.Connection.Delete(company)
+  db.Connection.Delete(company)
 }

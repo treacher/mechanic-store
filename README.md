@@ -2,6 +2,11 @@
 
 ## Development
 
+## Run database migrations
+
+* Run `go get bitbucket.org/liamstask/goose/cmd/goose` to install goose
+* Run `goose up`
+
 ### Run the application
 
 * Install [glide](https://github.com/Masterminds/glide) by following the instructions on the website.

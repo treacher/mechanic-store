@@ -1,7 +1,7 @@
 package models
 
 import (
-  "github.com/treacher/mechanic-store/database"
+  "github.com/treacher/mechanic-store/db"
 
   "time"
 )
@@ -21,6 +21,6 @@ func (company *Company) PersistCompany() error {
   company.CreatedAt = currentTime
   company.UpdatedAt = currentTime
 
-  err := database.Connection.Insert(&company)
+  err := db.Connection.Insert(&company)
   return err
 }
