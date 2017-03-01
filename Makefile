@@ -1,4 +1,4 @@
 GO_PACKAGE_PATHS := $(shell glide novendor)
 
-test:
+tests:
 	go test $(GO_PACKAGE_PATHS)

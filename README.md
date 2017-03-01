@@ -9,6 +9,9 @@
 * Run `go build`
 * Run `./mechanic-store`
 
+### Run the tests
+`make tests`
+
 #### Endpoints
 
 ##### Create a Company

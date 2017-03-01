@@ -2,24 +2,19 @@ package controllers_test
 
 import (
   "github.com/treacher/mechanic-store/router"
-  "gopkg.in/DATA-DOG/go-sqlmock.v1"
+  "github.com/treacher/mechanic-store/models"
+  "github.com/treacher/mechanic-store/database"
+  "gopkg.in/pg.v5"
 
   "net/http"
   "net/http/httptest"
   "testing"
   "strings"
+  "encoding/json"
 )
 
 func TestCreateCompany(t *testing.T) {
-  db, mock, err := sqlmock.New()
-  if err != nil {
-      t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-  }
-  defer db.Close()
-
-  mock.ExpectBegin()
-  mock.ExpectExec("INSERT INTO companies").WithArgs("dennis", "+64505050505", "foo@bar.com")
-  mock.ExpectCommit()
+  database.Connection = pg.Connect(&pg.Options{ User: "postgres", Database: "mechanic-store" })
 
   companyJson := `{"name": "dennis", "phone": "+64505050505", "email": "foo@bar.com" }`
   companyReader := strings.NewReader(companyJson)
@@ -32,9 +27,12 @@ func TestCreateCompany(t *testing.T) {
 
   testResponseCode(t, rr.Code, http.StatusCreated)
 
-  if err := mock.ExpectationsWereMet(); err != nil {
-    t.Errorf("there were unfulfilled expections: %s", err)
-  }
+  var company models.Company
+
+  json.NewDecoder(rr.Body).Decode(&company)
+
+  testCompanyPersisted(t, company.Id)
+  destroyCreatedCompany(&company)
 }
 
 func TestCreateCompanyWithEmptyBody(t *testing.T) {
@@ -78,4 +76,18 @@ func testResponseCode(t *testing.T, actual int, expected int) {
   if actual != expected {
     t.Errorf("handler returned wrong status code: got %v want %v", actual, expected)
   }
+}
+
+func testCompanyPersisted(t *testing.T, companyId uint64) {
+   var company models.Company
+
+   _, err := database.Connection.QueryOne(&company, `SELECT * FROM companies WHERE id = ?`, companyId)
+
+  if err != nil {
+    t.Errorf("expected company with id: %v to exist but it did not %v", companyId, err.Error())
+  }
+}
+
+func destroyCreatedCompany(company *models.Company) {
+  database.Connection.Delete(company)
 }
