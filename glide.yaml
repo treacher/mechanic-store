@@ -1,0 +1,9 @@
+package: github.com/treacher/mechanic-store
+import:
+- package: github.com/julienschmidt/httprouter
+  version: v1.1
+- package: gopkg.in/pg.v5
+  version: v5.3.2
+testImport:
+- package: gopkg.in/DATA-DOG/go-sqlmock.v1
+  version: v1.2.0

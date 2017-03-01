@@ -1,0 +1,18 @@
+hash: 1624a476eef8d98767f14429f0de1e863ea7defc050f1fb6c650763c015596ed
+updated: 2017-03-01T19:40:25.863002808+11:00
+imports:
+- name: github.com/jinzhu/inflection
+  version: 1c35d901db3da928c72a72d8458480cc9ade058f
+- name: github.com/julienschmidt/httprouter
+  version: 8c199fb6259ffc1af525cc3ad52ee60ba8359669
+- name: gopkg.in/pg.v5
+  version: f75c60c25ae08b7c51e102d6a852496ff7131453
+  subpackages:
+  - internal
+  - internal/parser
+  - internal/pool
+  - orm
+  - types
+testImports:
+- name: gopkg.in/DATA-DOG/go-sqlmock.v1
+  version: b983233bc0bbea4dc6e8ec8c8c923d935765ffec
