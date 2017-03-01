@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+  "github.com/treacher/mechanic-store/database"
+
+  "time"
+)
 
 type Company struct {
   Id         uint64   `json:"id"`
@@ -23,4 +27,9 @@ func (company Company) InitDates() Company {
   }
 
   return *companyWithDates;
+}
+
+func (company *Company) PersistCompany() error {
+  err := database.Connection.Insert(company)
+  return err
 }
