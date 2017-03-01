@@ -15,21 +15,12 @@ type Company struct {
   UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func (company Company) InitDates() Company {
+func (company *Company) PersistCompany() error {
   var currentTime = time.Now().UTC()
 
-  companyWithDates := &Company{
-    Name: company.Name,
-    Phone: company.Phone,
-    Email: company.Email,
-    CreatedAt: currentTime,
-    UpdatedAt: currentTime,
-  }
+  company.CreatedAt = currentTime
+  company.UpdatedAt = currentTime
 
-  return *companyWithDates;
-}
-
-func (company *Company) PersistCompany() error {
-  err := database.Connection.Insert(company)
+  err := database.Connection.Insert(&company)
   return err
 }

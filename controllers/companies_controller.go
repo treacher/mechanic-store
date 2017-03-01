@@ -23,8 +23,6 @@ func CreateCompany(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
     return
   }
 
-  company = company.InitDates()
-
   err = company.PersistCompany()
 
   if err != nil {
