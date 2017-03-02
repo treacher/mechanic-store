@@ -1,37 +1,44 @@
 package controllers
 
 import (
-  "github.com/julienschmidt/httprouter"
-  "github.com/treacher/mechanic-store/models"
+	"github.com/julienschmidt/httprouter"
+	"github.com/treacher/mechanic-store/models"
 
-  "net/http"
-  "encoding/json"
+	"encoding/json"
+	"errors"
+	"io"
+	"net/http"
 )
 
 func CreateCompany(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  var company models.Company
+	var company models.Company
 
-  if r.Body == nil {
-    http.Error(w, "No body provided", http.StatusBadRequest)
-    return
-  }
+	err := ParseJsonIntoObject(r.Body, &company)
 
-  err := json.NewDecoder(r.Body).Decode(&company)
+	HandleRequestError(w, err, http.StatusBadRequest)
 
-  if err != nil {
-    http.Error(w, err.Error(), http.StatusBadRequest)
-    return
-  }
+	err = company.PersistCompany()
 
-  err = company.PersistCompany()
+	HandleRequestError(w, err, http.StatusUnprocessableEntity)
 
-  if err != nil {
-    http.Error(w, err.Error(), http.StatusUnprocessableEntity)
-    return
-  }
+	w.WriteHeader(http.StatusCreated)
 
-  w.WriteHeader(http.StatusCreated)
-
-  json.NewEncoder(w).Encode(company)
+	json.NewEncoder(w).Encode(company)
 }
 
+func ParseJsonIntoObject(body io.Reader, obj interface{}) error {
+	if body == nil {
+		return errors.New("No body provided")
+	}
+
+	err := json.NewDecoder(body).Decode(obj)
+
+	return err
+}
+
+func HandleRequestError(w http.ResponseWriter, err error, code int) {
+	if err != nil {
+		http.Error(w, err.Error(), code)
+		return
+	}
+}
