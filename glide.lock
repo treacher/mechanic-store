@@ -1,10 +1,6 @@
-hash: 15888f391bdc9715b87db07380fbea33a7256f4f50da84d1bdf4aef4db34c4ef
-updated: 2017-03-01T23:42:32.181828563+11:00
+hash: d0cd2939b8238d897ab3e17701106c01cb2341557d3895c47bfe3864bceee151
+updated: 2017-03-02T18:39:24.833650653+11:00
 imports:
-- name: bitbucket.org/liamstask/goose
-  version: 8488cc47d90c8a502b1c41a462a6d9cc8ee0a895
-  subpackages:
-  - cmd/goose
 - name: github.com/jinzhu/inflection
   version: 1c35d901db3da928c72a72d8458480cc9ade058f
 - name: github.com/julienschmidt/httprouter
@@ -17,6 +13,4 @@ imports:
   - internal/pool
   - orm
   - types
-testImports:
-- name: gopkg.in/DATA-DOG/go-sqlmock.v1
-  version: b983233bc0bbea4dc6e8ec8c8c923d935765ffec
+testImports: []
