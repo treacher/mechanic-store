@@ -1,10 +1,16 @@
-hash: d0cd2939b8238d897ab3e17701106c01cb2341557d3895c47bfe3864bceee151
-updated: 2017-03-02T18:39:24.833650653+11:00
+hash: ddb3ef0f4fbb70334a7e8057d37bffde9050a579398ffb999a255ac1eb913e2c
+updated: 2017-03-07T19:06:13.334838942+11:00
 imports:
 - name: github.com/jinzhu/inflection
   version: 1c35d901db3da928c72a72d8458480cc9ade058f
 - name: github.com/julienschmidt/httprouter
   version: 8c199fb6259ffc1af525cc3ad52ee60ba8359669
+- name: github.com/onsi/ginkgo
+  version: 462326b1628e124b23f42e87a8f2750e3c4e2d24
+  subpackages:
+  - ginkgo
+- name: github.com/onsi/gomega
+  version: a78ae492d53aad5a7a232d0d0462c14c400e3ee7
 - name: gopkg.in/pg.v5
   version: f75c60c25ae08b7c51e102d6a852496ff7131453
   subpackages:

@@ -1,93 +1,66 @@
 package controllers_test
 
 import (
-  "github.com/treacher/mechanic-store/router"
-  "github.com/treacher/mechanic-store/models"
-  "github.com/treacher/mechanic-store/db"
-  "gopkg.in/pg.v5"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"github.com/treacher/mechanic-store/db"
+	"github.com/treacher/mechanic-store/models"
+	"github.com/treacher/mechanic-store/router"
 
-  "net/http"
-  "net/http/httptest"
-  "testing"
-  "strings"
-  "encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 )
 
-func TestCreateCompany(t *testing.T) {
-  db.Connection = pg.Connect(&pg.Options{ User: "postgres", Database: "mechanic-store" })
+var _ = Describe("Companies Controller", func() {
+	var (
+		companyJson      string
+		responseRecorder *httptest.ResponseRecorder
+		company          models.Company
+	)
 
-  companyJson := `{"name": "dennis", "phone": "+64505050505", "email": "foo@bar.com" }`
-  companyReader := strings.NewReader(companyJson)
+	Describe("Creating a company", func() {
+		JustBeforeEach(func() {
+			companyReader := strings.NewReader(companyJson)
+			req, err := http.NewRequest("POST", "/companies", companyReader)
 
-  req, err := http.NewRequest("POST", "/companies", companyReader)
+			Expect(err).NotTo(HaveOccurred())
 
-  handleFatalError(t, err)
+			responseRecorder = httptest.NewRecorder()
 
-  rr := setupRecorder(req)
+			router := router.Router()
 
-  testResponseCode(t, rr.Code, http.StatusCreated)
+			router.ServeHTTP(responseRecorder, req)
+		})
 
-  var company models.Company
+		Context("Valid JSON", func() {
+			BeforeEach(func() {
+				companyJson = `{"name": "dennis", "phone": "+64505050505", "email": "foo@bar.com" }`
+			})
 
-  json.NewDecoder(rr.Body).Decode(&company)
+			It("Persists the company", func() {
+				_, err := db.Connection.QueryOne(&company, `SELECT * FROM companies WHERE name = ?`, "dennis")
 
-  testCompanyPersisted(t, company.Id)
-  destroyCreatedCompany(&company)
-}
+				Expect(err).NotTo(HaveOccurred())
+				Expect(company.Phone).To(Equal("+64505050505"))
+				Expect(company.Email).To(Equal("foo@bar.com"))
+				Expect(company.CreatedAt).ToNot(BeNil())
+				Expect(company.UpdatedAt).ToNot(BeNil())
+			})
 
-func TestCreateCompanyWithEmptyBody(t *testing.T) {
-  req, err := http.NewRequest("POST", "/companies", nil)
+			It("responds with a StatusCreated response code", func() {
+				Expect(responseRecorder.Code).To(Equal(http.StatusCreated))
+			})
+		})
 
-  handleFatalError(t, err)
+		Context("Invalid JSON", func() {
+			BeforeEach(func() {
+				companyJson = "foo"
+			})
 
-  rr := setupRecorder(req)
-
-  testResponseCode(t, rr.Code, http.StatusBadRequest)
-}
-
-func TestCreateCompanyWithInvalidJSON(t *testing.T) {
-  stringReader := strings.NewReader("foo")
-  req, err := http.NewRequest("POST", "/companies", stringReader)
-
-  handleFatalError(t, err)
-
-  rr := setupRecorder(req)
-
-  testResponseCode(t, rr.Code, http.StatusBadRequest)
-}
-
-func setupRecorder(request *http.Request) *httptest.ResponseRecorder {
-  rr := httptest.NewRecorder()
-
-  router := router.Router()
-
-  router.ServeHTTP(rr, request)
-
-  return rr
-}
-
-func handleFatalError(t *testing.T, err error) {
-  if err != nil {
-      t.Fatal(err)
-  }
-}
-
-func testResponseCode(t *testing.T, actual int, expected int) {
-  if actual != expected {
-    t.Errorf("handler returned wrong status code: got %v want %v", actual, expected)
-  }
-}
-
-func testCompanyPersisted(t *testing.T, companyId uint64) {
-   var company models.Company
-
-   _, err := db.Connection.QueryOne(&company, `SELECT * FROM companies WHERE id = ?`, companyId)
-
-  if err != nil {
-    t.Errorf("expected company with id: %v to exist but it did not %v", companyId, err.Error())
-  }
-}
-
-func destroyCreatedCompany(company *models.Company) {
-  db.Connection.Delete(company)
-}
+			It("Responds with a BadRequest status", func() {
+				Expect(responseRecorder.Code).To(Equal(http.StatusBadRequest))
+			})
+		})
+	})
+})

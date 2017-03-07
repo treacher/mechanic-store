@@ -4,3 +4,9 @@ import:
   version: v1.1
 - package: gopkg.in/pg.v5
   version: v5.3.2
+- package: github.com/onsi/ginkgo
+  version: ~1.2.0
+  subpackages:
+  - ginkgo
+- package: github.com/onsi/gomega
+  version: ~1.0.0
