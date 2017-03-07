@@ -8,7 +8,7 @@ import (
 
 type Customer struct {
 	Id        uint64    `json:"id"`
-	companyId uint64    `json:"companyid"`
+	CompanyId uint64    `json:"company_id"`
 	Name      string    `json:"name"`
 	Phone     string    `json:"phone"`
 	Email     string    `json:"email"`
@@ -16,7 +16,7 @@ type Customer struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func (customer *Customer) PersistCustomer() error {
+func (customer *Customer) Persist() error {
 	var currentTime = time.Now().UTC()
 
 	customer.CreatedAt = currentTime

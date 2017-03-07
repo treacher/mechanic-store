@@ -9,18 +9,18 @@ import (
 	"net/http"
 )
 
-func CreateCompany(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	var company models.Company
+func CreateCustomer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var customer models.Customer
 
-	err := helpers.ParseJsonIntoObject(r.Body, &company)
+	err := helpers.ParseJsonIntoObject(r.Body, &customer)
 
 	helpers.HandleRequestError(w, err, http.StatusBadRequest)
 
-	err = company.Persist()
+	err = customer.Persist()
 
 	helpers.HandleRequestError(w, err, http.StatusUnprocessableEntity)
 
 	w.WriteHeader(http.StatusCreated)
 
-	json.NewEncoder(w).Encode(company)
+	json.NewEncoder(w).Encode(customer)
 }

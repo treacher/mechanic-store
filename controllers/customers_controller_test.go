@@ -7,22 +7,23 @@ import (
 	"github.com/treacher/mechanic-store/models"
 	"github.com/treacher/mechanic-store/router"
 
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 )
 
-var _ = Describe("Companies Controller", func() {
+var _ = Describe("Customers Controller", func() {
 	var (
 		companyJson      string
 		responseRecorder *httptest.ResponseRecorder
-		company          models.Company
+		customer         models.Customer
 	)
 
-	Describe("Creating a company", func() {
+	Describe("Creating a customer", func() {
 		JustBeforeEach(func() {
 			companyReader := strings.NewReader(companyJson)
-			req, err := http.NewRequest("POST", "/companies", companyReader)
+			req, err := http.NewRequest("POST", "/customers", companyReader)
 
 			Expect(err).NotTo(HaveOccurred())
 
@@ -34,17 +35,24 @@ var _ = Describe("Companies Controller", func() {
 
 		Context("Valid JSON", func() {
 			BeforeEach(func() {
-				companyJson = `{"name": "dennis", "phone": "+64505050505", "email": "foo@bar.com" }`
+				company := models.Company{Name: "Company", Phone: "+6454545454", Email: "bar@foo.com"}
+
+				err := company.Persist()
+				Expect(err).NotTo(HaveOccurred())
+
+				companyJson = `{"name": "dennis", "phone": "+64505050505", "email": "foo@bar.com", "company_id": %v }`
+				companyJson = fmt.Sprintf(companyJson, company.Id)
 			})
 
-			It("Persists the company", func() {
-				_, err := db.Connection.QueryOne(&company, `SELECT * FROM companies WHERE name = ?`, "dennis")
+			It("Persists the customer", func() {
+				_, err := db.Connection.QueryOne(&customer, `SELECT * FROM customers WHERE name = ?`, "dennis")
 
 				Expect(err).NotTo(HaveOccurred())
-				Expect(company.Phone).To(Equal("+64505050505"))
-				Expect(company.Email).To(Equal("foo@bar.com"))
-				Expect(company.CreatedAt).ToNot(BeNil())
-				Expect(company.UpdatedAt).ToNot(BeNil())
+				Expect(customer.Phone).To(Equal("+64505050505"))
+				Expect(customer.Email).To(Equal("foo@bar.com"))
+				Expect(customer.CompanyId).ToNot(BeNil())
+				Expect(customer.CreatedAt).ToNot(BeNil())
+				Expect(customer.UpdatedAt).ToNot(BeNil())
 			})
 
 			It("responds with a StatusCreated response code", func() {

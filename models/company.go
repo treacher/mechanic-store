@@ -15,7 +15,7 @@ type Company struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func (company *Company) PersistCompany() error {
+func (company *Company) Persist() error {
 	var currentTime = time.Now().UTC()
 
 	company.CreatedAt = currentTime
